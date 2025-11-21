@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI-Validated Registration Form</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+
+        .input-group { margin-bottom: 15px; }
+
+        .input-group input {
+            padding: 8px;
+            width: 250px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .valid {
+            border-color: green;
+        }
+
+        .invalid {
+            border-color: red;
+        }
+
+        .checkmark {
+            color: green;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Registration Form</h2>
+
+    <form id="reg-form" novalidate>
+        <div class="input-group">
+            <label>Name:</label><br>
+            <input id="name" name="name" type="text">
+            <span id="name-check" class="checkmark"></span>
+            <div id="name-error" class="error"></div>
+        </div>
+
+        <div class="input-group">
+            <label>Email:</label><br>
+            <input id="email" name="email" type="text">
+            <span id="email-check" class="checkmark"></span>
+            <div id="email-error" class="error"></div>
+        </div>
+
+        <div class="input-group">
+            <label>Password:</label><br>
+            <input id="password" name="password" type="password">
+            <span id="password-check" class="checkmark"></span>
+            <div id="password-error" class="error"></div>
+        </div>
+
+        <div class="input-group">
+            <button id="submit-btn" type="submit" disabled>Submit</button>
+            <div id="submit-success" style="color:green; margin-top:8px; display:none;">Submitted successfully!</div>
+        </div>
+    </form>
+
+    <script>
+        // AI-generated regex
+        const nameRegex = /^.{2,}$/;
+        const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+        const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+
+        function validateInput(id, regex, errorMsg) {
+            const input = document.getElementById(id);
+            const check = document.getElementById(id + "-check");
+            const error = document.getElementById(id + "-error");
+
+            input.addEventListener("input", () => {
+                const value = input.value;
+
+                if (regex.test(value)) {
+                    input.classList.add("valid");
+                    input.classList.remove("invalid");
+                    check.textContent = "✓";
+                    error.textContent = "";
+                } else {
+                    input.classList.add("invalid");
+                    input.classList.remove("valid");
+                    check.textContent = "";
+                    error.textContent = errorMsg;
+                }
+            });
+        }
+
+        // Attach validators
+        validateInput("name", nameRegex, "Name must be at least 2 characters.");
+        validateInput("email", emailRegex, "Email must contain '@' and '.'.");
+        validateInput("password", passwordRegex,
+            "Password must be 8+ chars, include a number and special character.");
+
+        // Enable/disable submit depending on validation state
+        const submitBtn = document.getElementById('submit-btn');
+        const form = document.getElementById('reg-form');
+
+        function checkFormValidity() {
+            const nameValid = nameRegex.test(document.getElementById('name').value);
+            const emailValid = emailRegex.test(document.getElementById('email').value);
+            const passwordValid = passwordRegex.test(document.getElementById('password').value);
+
+            if (nameValid && emailValid && passwordValid) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Call checkFormValidity whenever inputs change
+        document.getElementById('name').addEventListener('input', checkFormValidity);
+        document.getElementById('email').addEventListener('input', checkFormValidity);
+        document.getElementById('password').addEventListener('input', checkFormValidity);
+
+        // Handle form submit
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Final check (defensive)
+            if (!submitBtn.disabled) {
+                document.getElementById('submit-success').style.display = 'block';
+                // Here you could send data via fetch/AJAX or similar.
+            }
+        });
+
+        // Run an initial check in case inputs are pre-filled
+        checkFormValidity();
+    </script>
+
+</body>
+</html>
